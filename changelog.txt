@@ -1,0 +1,48 @@
+==========================================
+Theme: Journal Lite
+Author: Slocum Themes/Slocum Design Studio
+Author URI: http://slocumthemes.com
+Current Version: 1.0.6
+==========================================
+
+
+1.0.6 // July 02 2014
+---------------------
+- Updated to latest version of SDS Core
+- Updated CSS to accommodate new HTML markup
+- Added translation function to "read more" link when excerpt existed on a post
+- Added author byline to post date on archive and search templates
+- Updated .pot file
+
+1.0.4 // June 04 2014
+---------------------
+- Updated to latest version of SDS Core (contains fixes for Theme Customizer and fixes PHP warnings)
+- Fixed clearing display bug (comments)
+- Fixed bug where author box content would exceed container
+- Better bbPress & BuddyPress support
+- Update .pot file
+
+1.0.3 // April 23 2014
+----------------------
+- Removed external call to HTML5 Shiv in Journal.php
+- Properly escaped sds_copyright_branding() function
+
+1.0.2 // April 23 2014
+----------------------
+- Updated to latest version of SDS Core
+- Fixed issue where jQuery was not enqueued and mobile nav was broken
+- Adjusted journal_animation_class() function to ensure CSS animation was disabled on mobile devices
+- Moved $content_width declaration into after_setup_theme hook
+
+1.0.1 // April 22 2014
+----------------------
+- Removed recommendation for Minimize Blocks (TGM Plugin Activation)
+- Added load_theme_textdomain() and .pot translation file
+- Removed "One-Click Child Themes for Slocum Themes" from Theme Functions
+- Removed reference to external HTML5 Shiv library (now included locally)
+- Fixed PHP warning on sds_copyright function (missing argument)
+- Fixed missing function call in post author template
+
+1.0.0 // April 18 2014
+----------------------
+- New Theme
