@@ -2,9 +2,18 @@
 Theme: Journal Lite
 Author: Slocum Themes/Slocum Design Studio
 Author URI: http://slocumthemes.com
-Current Version: 1.0.6
+Current Version: 1.0.7
 ==========================================
 
+
+1.0.7 // October 20 2014
+------------------------
+- Updated to latest version of SDS Core
+- Removed underline on pagination
+- Added CSS classes on sidebar containers for better CSS targeting (added "widgets" and "no-widgets" classes)
+- Added WooCommerce support
+- Adjusted "mc-gravity" support to allow for multiple CSS classes
+- Updated POT file
 
 1.0.6 // July 02 2014
 ---------------------

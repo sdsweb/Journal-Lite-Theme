@@ -3,7 +3,7 @@
  * This class manages all functionality with our Journal theme.
  */
 class Journal {
-	const JOURNAL_VERSION = '1.0.6';
+	const JOURNAL_VERSION = '1.0.7';
 
 	private static $instance; // Keep track of the instance
 
@@ -40,6 +40,20 @@ class Journal {
 		// Gravity Forms
 		add_filter( 'gform_field_input', array( $this, 'gform_field_input' ), 10, 5 ); // Add placholder to newsletter form
 		add_filter( 'gform_confirmation', array( $this, 'gform_confirmation' ), 10, 4 ); // Change confirmation message on newsletter form
+
+		// WooCommerce
+		remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 ); // Remove default WooCommerce content wrapper
+		remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10 ); // Remove default WooCommerce content wrapper
+		add_action( 'woocommerce_before_main_content', array( $this, 'woocommerce_before_main_content' ) ); // Add Journal WooCommerce content wrapper
+		add_action( 'woocommerce_after_main_content', array( $this, 'woocommerce_after_main_content' ) ); // Add Journal WooCommerce content wrapper
+		remove_action( 'woocommerce_after_shop_loop', 'woocommerce_pagination', 10 ); // Remove default WooCommerce pagination
+		add_action( 'woocommerce_after_main_content', 'woocommerce_pagination', 20 ); // Add WooCommerce pagination
+		remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );// Remove default WooCommerce content wrapper
+		add_action( 'woocommerce_sidebar', array( $this, 'woocommerce_sidebar' ), 999 ); // Add Journal WooCommerce closing content wrapper
+		add_filter( 'woocommerce_product_settings', array( $this, 'woocommerce_product_settings' ) ); // Adjust default WooCommerce product settings
+		add_filter( 'loop_shop_per_page', array( $this, 'loop_shop_per_page' ), 20 ); // Adjust number of items displayed on a catalog page
+		remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 ); // Remove default WooCommerce related products
+		add_action( 'woocommerce_after_single_product_summary', array( $this, 'woocommerce_after_single_product_summary' ), 20 ); // Add WooCommerce related products (3x3)
 	}
 
 
@@ -67,6 +81,9 @@ class Journal {
 
 		// Remove footer nav which is registered in options panel
 		unregister_nav_menu( 'footer_nav' );
+
+		// WooCommerce Support
+		add_theme_support( 'woocommerce' );
 
 		// Change default core markup for search form, comment form, and comments, etc... to HTML5
 		add_theme_support( 'html5', array(
@@ -282,7 +299,8 @@ class Journal {
 			'journal_us', // IDs can have nested array keys
 			array(
 				'default' => false,
-				'type' => 'journal_us'
+				'type' => 'journal_us',
+				'sanitize_callback' => 'sanitize_text_field'
 			)
 		);
 
@@ -318,7 +336,7 @@ class Journal {
 	 * This function is run when the Theme Customizer is printing styles.
 	 */
 	function customize_controls_print_styles() {
-		?>
+	?>
 		<style type="text/css">
 			#accordion-section-journal_us .accordion-section-title,
 			#customize-theme-controls #accordion-section-journal_us .accordion-section-title:focus,
@@ -373,9 +391,10 @@ class Journal {
 	 */
 	function gform_field_input( $input, $field, $value, $lead_id, $form_id ) {
 		$form_meta = RGFormsModel::get_form_meta( $form_id );
+		$form_css_classes = explode( ' ', $form_meta['cssClass'] );
 
 		// Ensure the current form has one of our supported classes and alter the field accordingly if we're not on admin
-		if ( isset( $form['cssClass'] ) && ! is_admin() && in_array( $form_meta['cssClass'], array( 'mc-gravity', 'mc_gravity', 'mc-newsletter', 'mc_newsletter' ) ) )
+		if ( isset( $form['cssClass'] ) && ! is_admin() && in_array( $form_css_classes, array( 'mc-gravity', 'mc_gravity', 'mc-newsletter', 'mc_newsletter' ) ) )
 			$input = '<div class="ginput_container"><input name="input_' . $field['id'] . '" id="input_' . $form_id . '_' . $field['id'] . '" type="text" value="" class="large" placeholder="' . $field['label'] . '" /></div>';
 
 		return $input;
@@ -386,11 +405,76 @@ class Journal {
 	 * .mc-gravity, .mc_gravity, .mc-newsletter, .mc_newsletter classes
 	 */
 	function gform_confirmation( $confirmation, $form, $lead, $ajax ) {
+		$form_css_classes = explode( ' ', $form['cssClass'] );
+
 		// Confirmation message is set and form has one of our supported classes (alter the confirmation accordingly)
-		if ( isset( $form['cssClass'] ) && $form['confirmation']['type'] === 'message' && in_array( $form['cssClass'], array( 'mc-gravity', 'mc_gravity', 'mc-newsletter', 'mc_newsletter' ) ) )
+		if ( isset( $form['cssClass'] ) && $form['confirmation']['type'] === 'message' && in_array( $form_css_classes, array( 'mc-gravity', 'mc_gravity', 'mc-newsletter', 'mc_newsletter' ) ) )
 			$confirmation = '<section class="mc-gravity-confirmation mc_gravity-confirmation mc-newsletter-confirmation mc_newsletter-confirmation">' . $confirmation . '</section>';
 
 		return $confirmation;
+	}
+
+
+	/***************
+	 * WooCommerce *
+	 ***************/
+
+	/**
+	 * This function alters the default WooCommerce content wrapper starting element.
+	 */
+	function woocommerce_before_main_content() {
+	?>
+		<section class="woocommerce woo-commerce content-wrapper index cf">
+			<section class="post woocommerce-post cf">
+	<?php
+	}
+
+	/**
+	 * This function alters the default WooCommerce content wrapper ending element.
+	 */
+	function woocommerce_after_main_content() {
+	?>
+			</section>
+	<?php
+	}
+
+	/**
+	 * This function adds to the default WooCommerce content wrapper ending element.
+	 */
+	function woocommerce_sidebar() {
+	?>
+		</section>
+	<?php
+	}
+
+	/**
+	 * This function adjusts the default WooCommerce Product settings.
+	 */
+	function woocommerce_product_settings( $settings ) {
+		if ( is_array( $settings ) )
+			foreach( $settings as &$setting )
+				// Adjust the default value of the Catalog image size
+				if( $setting['id'] === 'shop_catalog_image_size' )
+					$setting['default']['width'] = $setting['default']['height'] = 300;
+
+		return $settings;
+	}
+
+	/**
+	 * This function changes the number of products output on the Catalog page.
+	 */
+	function loop_shop_per_page( $num_items ) {
+		return 12;
+	}
+
+	/**
+	 * This function changes the number of related products displayed on a single product page.
+	 */
+	function woocommerce_after_single_product_summary() {
+		woocommerce_related_products( array(
+			'posts_per_page' => 3,
+			'columns' => 3
+		) );
 	}
 }
 

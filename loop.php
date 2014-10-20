@@ -48,7 +48,7 @@
 
 	<section class="clear"></section>
 
-	<section class="after-posts-widgets <?php echo ( is_active_sidebar( 'after-posts-sidebar' ) ) ? 'after-posts-widgets-active' : false; ?> cf">
+	<section class="after-posts-widgets <?php echo ( is_active_sidebar( 'after-posts-sidebar' ) ) ? 'after-posts-widgets-active widgets' : 'no-widgets'; ?> cf">
 		<?php
 			// After posts Sidebar
 			if ( is_active_sidebar( 'after-posts-sidebar' ) )

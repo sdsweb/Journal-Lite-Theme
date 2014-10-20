@@ -1,4 +1,4 @@
-<aside class="sidebar cf">
+<aside class="sidebar cf <?php echo ( is_active_sidebar( 'primary-sidebar' ) ) ? 'widgets' : 'no-widgets'; ?>">
 	<?php
 		// Primary Sidebar
 		if ( is_active_sidebar( 'primary-sidebar' ) ) :

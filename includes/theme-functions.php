@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * Description: This file contains functions for utilizing options within themes (displaying site logo, tagline, etc...)
  *
- * @version 1.2.5
+ * @version 1.2.6
  */
 
 
@@ -20,7 +20,6 @@ $sds_theme_options = SDS_Theme_Options::get_sds_theme_options();
 /***********************
  * Pluggable Functions *
  ***********************/
-
 
 /**
  * This function displays either a logo, or the site title depending on options.
@@ -39,20 +38,20 @@ if ( ! function_exists( 'sds_logo' ) ) {
 
 		// Logo
 		if ( ! empty( $sds_theme_options['logo_attachment_id'] ) ) :
-		?>
+			?>
 			<<?php echo $sds_logo_wrapper_el; ?> id="title" class="site-title site-title-logo has-logo">
-				<a href="<?php echo esc_url( home_url() ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
-					<?php echo wp_get_attachment_image( $sds_theme_options['logo_attachment_id'], 'full' ); ?>
-				</a>
+			<a href="<?php echo esc_url( home_url() ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+				<?php echo wp_get_attachment_image( $sds_theme_options['logo_attachment_id'], 'full' ); ?>
+			</a>
 			</<?php echo $sds_logo_wrapper_el; ?>>
 		<?php
 		// No logo
 		else :
-		?>
+			?>
 			<<?php echo $sds_logo_wrapper_el; ?> id="title" class="site-title site-title-no-logo no-logo">
-				<a href="<?php echo esc_url( home_url() ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
-					<?php bloginfo( 'name' ); ?>
-				</a>
+			<a href="<?php echo esc_url( home_url() ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+				<?php bloginfo( 'name' ); ?>
+			</a>
 			</<?php echo $sds_logo_wrapper_el; ?>>
 		<?php
 		endif;
@@ -70,9 +69,9 @@ if ( ! function_exists( 'sds_tagline' ) ) {
 
 		// Determine HTML wrapper element
 		$sds_tagline_wrapper_el = ( is_front_page() || is_home() ) ? 'h2' : 'p';
-	?>
+		?>
 		<<?php echo $sds_tagline_wrapper_el; ?> id="slogan" class="slogan <?php echo ( $sds_theme_options['hide_tagline'] ) ? 'hide hidden hide-tagline hide-slogan' : false; ?>">
-			<?php bloginfo( 'description' ); ?>
+		<?php bloginfo( 'description' ); ?>
 		</<?php echo $sds_tagline_wrapper_el; ?>>
 	<?php
 	}
@@ -88,7 +87,7 @@ if ( ! function_exists( 'sds_tagline' ) ) {
  * @uses the_post_thumbnail()
  */
 if ( ! function_exists( 'sds_featured_image' ) ) {
-	function sds_featured_image( $link_image = false, $size = false ) {	
+	function sds_featured_image( $link_image = false, $size = false ) {
 		// Allow size to be over-written by function call
 		if ( $size )
 			$featured_image_size = $size;
@@ -99,19 +98,19 @@ if ( ! function_exists( 'sds_featured_image' ) ) {
 
 		// Featured Image
 		if ( has_post_thumbnail() && $link_image ) :
-	?>
-		<figure class="post-image <?php echo $featured_image_size . '-featured-image ' . $featured_image_size . '-post-image'; ?>">
-			<a href="<?php the_permalink(); ?>">
-				<?php the_post_thumbnail( $featured_image_size ); ?>
-			</a>
-		</figure>
-	<?php
+			?>
+			<figure class="post-image <?php echo $featured_image_size . '-featured-image ' . $featured_image_size . '-post-image'; ?>">
+				<a href="<?php the_permalink(); ?>">
+					<?php the_post_thumbnail( $featured_image_size ); ?>
+				</a>
+			</figure>
+		<?php
 		elseif ( has_post_thumbnail() ) :
-	?>
-		<figure class="post-image <?php echo $featured_image_size . '-featured-image ' . $featured_image_size . '-post-image'; ?>">
-			<?php the_post_thumbnail( $featured_image_size ); ?>
-		</figure>
-	<?php
+			?>
+			<figure class="post-image <?php echo $featured_image_size . '-featured-image ' . $featured_image_size . '-post-image'; ?>">
+				<?php the_post_thumbnail( $featured_image_size ); ?>
+			</figure>
+		<?php
 		endif;
 	}
 }
@@ -151,7 +150,7 @@ if ( ! function_exists( 'sds_primary_menu_fallback' ) ) {
  */
 if ( ! function_exists( 'sds_sitemap' ) ) {
 	function sds_sitemap() {
-	?>
+		?>
 		<section class="sds-sitemap sitemap">
 			<section class="sitemap-pages page-list">
 				<h2 title="<?php esc_attr_e( 'Pages', 'journal' ); ?>"><?php _e( 'Pages', 'journal' ); ?></h2>
@@ -176,9 +175,9 @@ if ( ! function_exists( 'sds_sitemap' ) ) {
 
 
 			<?php
-				// Output all public post types except attachments and pages (see above for pages)
-				foreach( get_post_types( array( 'public' => true ) ) as $post_type ) {
-					if ( ! in_array( $post_type, array( 'attachment', 'page' ) ) ) {
+			// Output all public post types except attachments and pages (see above for pages)
+			foreach( get_post_types( array( 'public' => true ) ) as $post_type ) {
+				if ( ! in_array( $post_type, array( 'attachment', 'page' ) ) ) {
 					$post_type_object = get_post_type_object( $post_type );
 
 					$query = new WP_Query( array(
@@ -187,7 +186,7 @@ if ( ! function_exists( 'sds_sitemap' ) ) {
 					) );
 
 					if( $query->have_posts() ) :
-					?>
+						?>
 						<section class="sitemap-post-type-list sitemap-<?php echo $post_type_object->name; ?>-list post-type-list">
 							<h2 title="<?php echo esc_attr( $post_type_object->labels->name ); ?>">
 								<?php echo $post_type_object->labels->name; ?>
@@ -219,21 +218,21 @@ if ( ! function_exists( 'sds_archive_title' ) ) {
 		// Author
 		if ( is_author() ) :
 			$author = get_user_by( 'slug', get_query_var( 'author_name' ) ); // Get user data by slug with value of author_name in query
-		?>
+			?>
 			<h1 title="<?php esc_attr_e( 'Author Archive:', 'journal' ); ?> <?php echo ( $author instanceof WP_User ) ? $author->display_name : false; ?>" class="page-title author-archive-title">
 				<?php _e( 'Author Archive:', 'journal' ); ?> <?php echo ( $author instanceof WP_User ) ? $author->display_name : false; ?>
 			</h1>
 		<?php
 		// Categories
 		elseif ( is_category() ) :
-		?>
+			?>
 			<h1 title="<?php single_cat_title( __( 'Category Archive: ', 'journal' ) ); ?>" class="page-title category-archive-title">
 				<?php single_cat_title( __( 'Category Archive: ', 'journal' ) ); ?>
 			</h1>
-		<?php 
+		<?php
 		// Tags
 		elseif ( is_tag() ) :
-		?>
+			?>
 			<h1 title="<?php single_tag_title( __( 'Tag Archive: ', 'journal' ) ); ?>" class="page-title tag-archive-title">
 				<?php single_tag_title( __( 'Tag Archive: ', 'journal' ) ); ?>
 			</h1>
@@ -241,7 +240,7 @@ if ( ! function_exists( 'sds_archive_title' ) ) {
 		// Daily Archives
 		elseif ( is_day() ) :
 			$the_date = get_the_date();
-		?>
+			?>
 			<h1 title="<?php esc_attr_e( 'Daily Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title day-archive-title daily-archive-title">
 				<?php _e( 'Daily Archives:', 'journal' ); ?> <?php echo $the_date; ?>
 			</h1>
@@ -249,7 +248,7 @@ if ( ! function_exists( 'sds_archive_title' ) ) {
 		// Monthly Archives
 		elseif ( is_month() ) :
 			$the_date = get_the_date( 'F Y' );
-		?>
+			?>
 			<h1 title="<?php esc_attr_e( 'Monthly Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title month-archive-title monthly-archive-title">
 				<?php _e( 'Monthly Archives:', 'journal' ); ?> <?php echo $the_date; ?>
 			</h1>
@@ -257,7 +256,7 @@ if ( ! function_exists( 'sds_archive_title' ) ) {
 		// Yearly Archives
 		elseif ( is_year() ) :
 			$the_date = get_the_date( 'Y' );
-		?>
+			?>
 			<h1 title="<?php esc_attr_e( 'Yearly Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title year-archive-title yearly-archive-title">
 				<?php _e( 'Yearly Archives:', 'journal' ); ?> <?php echo $the_date; ?>
 			</h1>
@@ -271,7 +270,7 @@ if ( ! function_exists( 'sds_archive_title' ) ) {
  */
 if ( ! function_exists( 'sds_no_posts' ) ) {
 	function sds_no_posts() {
-	?>
+		?>
 		<section class="no-results no-posts">
 			<p><?php _e( 'We were not able to find any posts. Please try again.', 'journal' ); ?></p>
 		</section>
@@ -284,7 +283,7 @@ if ( ! function_exists( 'sds_no_posts' ) ) {
  */
 if ( ! function_exists( 'sds_single_post_navigation' ) ) {
 	function sds_single_post_navigation() {
-	?>
+		?>
 		<section class="single-post-navigation post-navigation">
 			<section class="previous-posts">
 				<?php next_post_link( '%link', '&laquo; %title' ); ?>
@@ -302,7 +301,7 @@ if ( ! function_exists( 'sds_single_post_navigation' ) ) {
  */
 if ( ! function_exists( 'sds_single_image_navigation' ) ) {
 	function sds_single_image_navigation() {
-	?>
+		?>
 		<section class="single-post-navigation post-navigation single-image-navigation image-navigation">
 			<section class="previous-posts">
 				<?php previous_image_link( false, '&laquo; Previous Image' ); ?>
@@ -320,12 +319,12 @@ if ( ! function_exists( 'sds_single_image_navigation' ) ) {
  */
 if ( ! function_exists( 'sds_copyright' ) ) {
 	function sds_copyright( $theme_name ) {
-	?>
+		?>
 		<span class="site-copyright">
 			<?php echo apply_filters( 'sds_copyright', 'Copyright &copy; ' . date( 'Y' ) . ' <a href="' . esc_url( home_url() ) . '">' . get_bloginfo( 'name' ) . '</a>. All Rights Reserved.' ); ?>
 		</span>
 		<span class="slocum-credit">
-			<?php echo apply_filters( 'sds_copyright_branding', sprintf( __( '<a href="%1$s">%2$s by Slocum Studio</a>', 'journal' ), esc_url( 'http://slocumthemes.com/wordpress-themes/journal/' ), $theme_name ), $theme_name ); ?>
+			<?php echo apply_filters( 'sds_copyright_branding', '<a href="http://slocumthemes.com/" target="_blank">' . $theme_name . ' by Slocum Studio</a>', $theme_name ); ?>
 		</span>
 	<?php
 	}
@@ -356,28 +355,28 @@ if ( ! function_exists( 'sds_social_media' ) ) {
 			);
 
 			$social_font_map = apply_filters( 'sds_social_icon_map', $social_font_map );
-		?>
+			?>
 			<section class="social-media-icons">
-			<?php
+				<?php
 				foreach( $sds_theme_options['social_media'] as $key => $url ) :
 					// RSS (use site RSS feed, $url is Boolean this case)
 					if ( $key === 'rss_url_use_site_feed' && $url ) :
-					?>
+						?>
 						<a href="<?php bloginfo( 'rss2_url' ); ?>" class="rss_url <?php echo $social_font_map['rss_url']; ?>" target="_blank"></a>
 					<?php
 					// RSS (use custom RSS feed)
 					elseif ( $key === 'rss_url' && ! $sds_theme_options['social_media']['rss_url_use_site_feed'] && ! empty( $url ) ) :
-					?>
+						?>
 						<a href="<?php echo esc_attr( $url ); ?>" class="rss_url <?php echo $social_font_map['rss_url']; ?>" target="_blank"></a>
 					<?php
 					// All other networks
 					elseif ( $key !== 'rss_url_use_site_feed' && $key !== 'rss_url' && ! empty( $url ) ) :
-					?>
+						?>
 						<a href="<?php echo esc_url( $url ); ?>" class="<?php echo $key; ?> <?php echo $social_font_map[$key]; ?>" target="_blank" rel="me"></a>
 					<?php
 					endif;
 				endforeach;
-			?>
+				?>
 			</section>
 		<?php
 		}
@@ -394,33 +393,33 @@ if ( ! function_exists( 'sds_post_meta' ) ) {
 
 		// Categories and tags
 		if ( $cats && $tags ):
-		?>
-			<p>
-			<?php
-				printf( __( 'This entry was posted in %1$s and tagged in %2$s.', 'journal' ),
-				get_the_category_list( ', ', 'single' ),
-				get_the_tag_list( '', ', ' ) );
 			?>
+			<p>
+				<?php
+				printf( __( 'This entry was posted in %1$s and tagged in %2$s.', 'journal' ),
+					get_the_category_list( ', ', 'single' ),
+					get_the_tag_list( '', ', ' ) );
+				?>
 			</p>
 		<?php
 		// Categories and no tags
 		elseif ( $cats && ! $tags ) :
-		?>
-			<p>
-			<?php
-				printf( __( 'This entry was posted in %1$s.', 'journal' ),
-				get_the_category_list( ', ', 'single' ) );
 			?>
+			<p>
+				<?php
+				printf( __( 'This entry was posted in %1$s.', 'journal' ),
+					get_the_category_list( ', ', 'single' ) );
+				?>
 			</p>
 		<?php
 		// Tags and no categories
 		elseif ( $tags && ! $cats ) :
-		?>
-			<p>
-			<?php
-				printf( __( 'This entry was tagged in %1$s.', 'journal' ),
-				get_the_tag_list( '', ', ' ) );
 			?>
+			<p>
+				<?php
+				printf( __( 'This entry was tagged in %1$s.', 'journal' ),
+					get_the_tag_list( '', ', ' ) );
+				?>
 			</p>
 		<?php
 		endif;
@@ -468,58 +467,58 @@ if ( ! function_exists( 'sds_comment' ) ) {
 		switch ( $comment->comment_type ) :
 			case 'pingback' :
 			case 'trackback' :
-			// Display trackbacks differently than normal comments.
-		?>
-		<li id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
-			<p><?php _e( 'Pingback:', 'journal' ); ?> <?php comment_author_link(); ?> <?php edit_comment_link( 'Edit', '<span class="ping-meta"><span class="edit-link">', '</span></span>' ); ?></p>
-		</li>
-		<?php
-			break;
+				// Display trackbacks differently than normal comments.
+				?>
+				<li id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
+					<p><?php _e( 'Pingback:', 'journal' ); ?> <?php comment_author_link(); ?> <?php edit_comment_link( 'Edit', '<span class="ping-meta"><span class="edit-link">', '</span></span>' ); ?></p>
+				</li>
+				<?php
+				break;
 			default :
-			// Proceed with normal comments.
-		?>
-		<li id="li-comment-<?php comment_ID(); ?>">
-			<article id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
-				<section class="comment-author vcard">
-					<section class="author-details">
-						<?php echo get_avatar( $comment, 74 ); ?>
-						<span class="author-link"><?php comment_author_link(); ?></span>
-						<br />
-						<header class="comment-meta">
-							<cite class="fn">
-								<?php
-									printf( __( '<a href="%1$s"><time datetime="%2$s" itemprop="commentTime">%3$s</time></a>', 'journal' ),
-										esc_url( get_comment_link( $comment->comment_ID ) ),
-										get_comment_time( 'c' ),
-										sprintf( __( '%1$s at %2$s', 'journal' ), get_comment_date(), get_comment_time() )
-									);
-								?>
+				// Proceed with normal comments.
+				?>
+					<li id="li-comment-<?php comment_ID(); ?>">
+						<article id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
+							<section class="comment-author vcard">
+								<section class="author-details">
+									<?php echo get_avatar( $comment, 74 ); ?>
+									<span class="author-link"><?php comment_author_link(); ?></span>
+									<br />
+									<header class="comment-meta">
+										<cite class="fn">
+											<?php
+											printf( __( '<a href="%1$s"><time datetime="%2$s" itemprop="commentTime">%3$s</time></a>', 'journal' ),
+												esc_url( get_comment_link( $comment->comment_ID ) ),
+												get_comment_time( 'c' ),
+												sprintf( __( '%1$s at %2$s', 'journal' ), get_comment_date(), get_comment_time() )
+											);
+											?>
 
-								<?php edit_comment_link( __( 'Edit', 'journal' ), '<span class="edit-link">', '<span>' ); ?>
-							</cite>
-						</header>
-					</section>
-				</section>
+											<?php edit_comment_link( __( 'Edit', 'journal' ), '<span class="edit-link">', '<span>' ); ?>
+										</cite>
+									</header>
+								</section>
+							</section>
 
-				<section class="comment-content-container">
-					<?php if ( $comment->comment_approved == '0' ) : ?>
-						<p class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.', 'journal' ); ?></p>
-					<?php endif; ?>
+							<section class="comment-content-container">
+								<?php if ( $comment->comment_approved == '0' ) : ?>
+									<p class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.', 'journal' ); ?></p>
+								<?php endif; ?>
 
-					<section class="comment-content">
-						<?php comment_text(); ?>
-					</section>
-				</section>
+								<section class="comment-content">
+									<?php comment_text(); ?>
+								</section>
+							</section>
 
-				<section class="clear">&nbsp;</section>
+							<section class="clear">&nbsp;</section>
 
-				<section class="reply">
-					<?php comment_reply_link( array_merge( $args, array( 'reply_text' => __( 'Reply', 'journal' ), 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
-				</section>
-			</article>
-		</li>
-		<?php
-			break;
+							<section class="reply">
+								<?php comment_reply_link( array_merge( $args, array( 'reply_text' => __( 'Reply', 'journal' ), 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
+							</section>
+						</article>
+					</li>
+				<?php
+				break;
 		endswitch;
 	}
 }
@@ -553,18 +552,13 @@ function sds_customize_register( $wp_customize ) {
 		'sds_theme_options[logo_attachment_id]', // IDs can have nested array keys
 		array(
 			'default' => $sds_theme_options_defaults['logo_attachment_id'],
-			'type' => 'option'
+			'type' => 'option',
+			'sanitize_callback' => 'absint'
 		)
 	);
 
 	// Section - overwrite the default title_tagline section properties
-	$wp_customize->add_section(
-		'title_tagline',
-		array(
-			'title'    => __( 'Logo/Site Title & Tagline', 'journal' ), // Title changes from default
-			'priority' => 20
-		)
-	);
+	$wp_customize->get_section( 'title_tagline' )->title = __( 'Logo/Site Title & Tagline', 'journal' );
 
 	// Control
 	$wp_customize->add_control(
@@ -654,18 +648,60 @@ function sds_customize_controls_enqueue_scripts() {
  ***************************/
 
 /**
+ * This function sets various theme options to their defaults to prevent overlap between themes.
+ */
+add_action( 'after_switch_theme' , 'sds_after_switch_theme' );
+
+function sds_after_switch_theme() {
+	global $sds_theme_options;
+
+	$sds_theme_option_defaults = SDS_Theme_Options::get_sds_theme_option_defaults(); // Defaults
+
+	// Color Scheme (reset if necessary)
+	if ( ! empty( $sds_theme_options['color_scheme'] ) && function_exists( 'sds_color_schemes' ) ) {
+		$color_scheme = $sds_theme_options['color_scheme'];
+		$color_schemes = sds_color_schemes();
+
+		if ( ! isset( $color_schemes[$color_scheme] ) )
+			$sds_theme_options['color_scheme'] = $sds_theme_option_defaults['color_scheme'];
+	}
+
+	// Web Font (reset if necessary)
+	if ( ! empty( $sds_theme_options['web_font'] ) && function_exists( 'sds_web_fonts' ) ) {
+		$web_font = $sds_theme_options['web_font'];
+		$web_fonts = sds_web_fonts();
+
+		if ( ! isset( $web_fonts[$web_font] ) )
+			$sds_theme_options['web_font'] = $sds_theme_option_defaults['web_font'];
+	}
+
+	// Content Layouts (reset if necessary)
+	if ( function_exists( 'sds_content_layouts' ) ) {
+		$content_layouts = $sds_theme_options['content_layouts'];
+		$sds_content_layouts = sds_content_layouts();
+
+		foreach( $content_layouts as $content_layout_id => $content_layout )
+			if ( $content_layout && ! isset( $sds_content_layouts[$content_layout] ) )
+				$sds_theme_options['content_layouts'][$content_layout_id] = $sds_theme_option_defaults['content_layouts'][$content_layout_id];
+	}
+
+	// Update the option with new values
+	update_option( SDS_Theme_Options::$option_name, $sds_theme_options );
+}
+
+/**
  * This function ties into the TGM Plugin Activation Class and recommends plugins to the user.
  */
 add_action( 'tgmpa_register', 'sds_tgmpa_register' );
 
 function sds_tgmpa_register() {
 	$plugins = array(
-        // Soliloquy
-        array(
-            'name'      => 'Soliloquy Lite',
-            'slug'      => 'soliloquy-lite',
-            'required'  => false
-        )
+		// Soliloquy
+		array(
+			'name'      => 'Soliloquy Lite',
+			'slug'      => 'soliloquy-lite',
+			'required'  => false
+		)
 	);
 
 	$plugins = apply_filters( 'sds_tgmpa_plugins', $plugins );
@@ -727,10 +763,10 @@ function sds_wp_head() {
 		$selected_web_font = array_key_exists( $sds_theme_options['web_font'], $web_fonts ) ? $web_fonts[$sds_theme_options['web_font']] : false;
 
 		if ( ! empty( $selected_web_font ) && isset( $selected_web_font['css'] ) ) :
-		?>
+			?>
 			<style type="text/css">
 				<?php echo apply_filters( 'sds_web_font_css_selector', 'html, body' ); ?> {
-					<?php echo $selected_web_font['css']; ?>
+				<?php echo $selected_web_font['css']; ?>
 				}
 			</style>
 		<?php
