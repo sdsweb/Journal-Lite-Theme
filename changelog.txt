@@ -9,7 +9,7 @@ Current Version: 1.0.7
 1.0.7 // October 20 2014
 ------------------------
 - Updated to latest version of SDS Core
-- Removed underline on pagination
+- Removed underline on pagination links
 - Added CSS classes on sidebar containers for better CSS targeting (added "widgets" and "no-widgets" classes)
 - Added WooCommerce support
 - Adjusted "mc-gravity" support to allow for multiple CSS classes

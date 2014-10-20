@@ -50,6 +50,36 @@ h3.sds-theme-options-nav-tab-wrapper {
 	box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.2), inset 0px -2px 0px 0px rgba(0,0,0,0.3), inset 0px 2px 0px 0px rgba(255,255,255,0.5);
 }
 
+.sds-theme-options-btn-yellow {
+	width: 100%;
+	padding: 20px 0;
+	background-color: #deb132;
+	color: #fff;
+	text-decoration: none;
+	text-align: center;
+	display: block;
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	text-shadow: 1px 1px 1px #555555;
+	filter: dropshadow(color=#555555, offx=1, offy=1);
+	box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.2), inset 0px -5px 0px 0px rgba(0,0,0,0.3), inset 0px 2px 0px 0px rgba(255,255,255,0.5);
+
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.sds-theme-options-btn-yellow:hover {
+	box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.4), inset 0px -5px 0px 0px rgba(0,0,0,0.5);
+}
+
+.sds-theme-options-btn-yellow:active {
+	box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.2), inset 0px -2px 0px 0px rgba(0,0,0,0.3), inset 0px 2px 0px 0px rgba(255,255,255,0.5);
+}
+
 /* Notifications */
 .sds-theme-options-notification {
 	margin-bottom: 1em;
@@ -392,10 +422,10 @@ textarea {
 }
 
 .sds-theme-options-content-layout .sds-theme-options-content-layout-preview {
-	width: 60px;
-	height: 60px;
+	width: 70px;
+	height: 70px;
 	margin: 0 4px 15px 0;
-	padding: 4px;
+	padding: 0;
 	color: #666;
 	border: 1px solid #ccc;
 	text-align: center;
@@ -418,8 +448,9 @@ textarea {
 }
 
 .sds-theme-options-content-layout-preview .col {
-	width: 100%;
-	height: 100%;
+	width: 89%;
+	height: 89%;
+	margin: 6%;
 	background: #ccc;
 	position: absolute;
 	display: table;
@@ -472,20 +503,19 @@ textarea {
 
 /* Full Width */
 .sds-theme-options-content-layout-preview .cols-1 .col-content {
-	width: 100%;
-	top: 4px;
+	/*top: 4px;
 	right: 4px;
 	bottom: 4px;
-	left: 4px;
+	left: 4px;*/
 }
 
 /* 2 Columns */
 .sds-theme-options-content-layout-preview .cols-2 .col-content {
-	width: 62%;
-	top: 4px;
+	width: 51%;
+	/*top: 4px;
 	right: auto;
 	bottom: 4px;
-	left: 4px;
+	left: 4px;*/
 
 	-webkit-border-radius: 3px 0 0 3px;
 	-moz-border-radius: 3px 0 0 3px;
@@ -494,23 +524,29 @@ textarea {
 }
 
 .sds-theme-options-content-layout-preview .cols-2 .col-sidebar {
-	width: 36%;
-	top: 4px;
+	width: 35%;
+	right: 0;
+	/*top: 4px;
 	right: 1px;
 	bottom: 4px;
-	left: auto;
+	left: auto;*/
 
 	-webkit-border-radius: 0 3px 3px 0;
 	-moz-border-radius: 0 3px 3px 0;
 	-ms-border-radius: 0 3px 3px 0;
 	border-radius: 0 3px 3px 0;
+}
+
+.sds-theme-options-content-layout-wrap.ie .sds-theme-options-content-layout-preview .cols-2 .col-sidebar {
+	right: 35%;
 }
 
 .sds-theme-options-content-layout-preview .cols-2-r .col-content {
-	top: 4px;
+	right: -1px;
+	/*top: 4px;
 	right: -1px;
 	bottom: 4px;
-	left: auto;
+	left: auto;*/
 
 	-webkit-border-radius: 0 3px 3px 0;
 	-moz-border-radius: 0 3px 3px 0;
@@ -518,11 +554,16 @@ textarea {
 	border-radius: 0 3px 3px 0;
 }
 
+.sds-theme-options-content-layout-wrap.ie .sds-theme-options-content-layout-preview .cols-2-r .col-content {
+	right: 51%;
+}
+
 .sds-theme-options-content-layout-preview .cols-2-r .col-sidebar {
-	top: 4px;
+	left: 0;
+	/*top: 4px;
 	right: auto;
 	bottom: 4px;
-	left: 4px;
+	left: 4px;*/
 
 	-webkit-border-radius: 3px 0 0 3px;
 	-moz-border-radius: 3px 0 0 3px;
@@ -532,11 +573,12 @@ textarea {
 
 /* 3 Columns */
 .sds-theme-options-content-layout-preview .cols-3 .col-content {
-	width: 48%;
-	top: 4px;
+	width: 44%;
+	left: 0;
+	/*top: 4px;
 	right: auto;
 	bottom: 4px;
-	left: 4px;
+	left: 4px;*/
 
 	-webkit-border-radius: 3px 0 0 3px;
 	-moz-border-radius: 3px 0 0 3px;
@@ -545,11 +587,12 @@ textarea {
 }
 
 .sds-theme-options-content-layout-preview .cols-3 .col-sidebar {
-	width: 24%;
-	top: 4px;
+	width: 20%;
+	left: 46%;
+	/*top: 4px;
 	right: 18px;
 	bottom: 4px;
-	left: auto;
+	left: auto;*/
 
 	-webkit-border-radius: 0;
 	-moz-border-radius: 0;
@@ -558,11 +601,13 @@ textarea {
 }
 
 .sds-theme-options-content-layout-preview .cols-3 .col-sidebar-secondary {
-	width: 24%;
-	top: 4px;
+	width: 20%;
+	right: -1px;
+	left: auto;
+	/*top: 4px;
 	right: 2px;
 	bottom: 4px;
-	left: auto;
+	left: auto;*/
 
 	-webkit-border-radius: 0 3px 3px 0;
 	-moz-border-radius: 0 3px 3px 0;
@@ -570,11 +615,15 @@ textarea {
 	border-radius: 0 3px 3px 0;
 }
 
+.sds-theme-options-content-layout-wrap.ie .sds-theme-options-content-layout-preview .cols-3 .col-sidebar-secondary {
+	right: 20%;
+}
+
 .sds-theme-options-content-layout-preview .cols-3-m .col-content {
-	top: 4px;
+	/*top: 4px;
 	right: auto;
-	bottom: 4px;
-	left: 20px;
+	bottom: 4px;*/
+	left: 22%;
 
 	-webkit-border-radius: 0;
 	-moz-border-radius: 0;
@@ -583,10 +632,12 @@ textarea {
 }
 
 .sds-theme-options-content-layout-preview .cols-3-m .col-sidebar {
-	top: 4px;
+	right: auto;
+	left: 0;
+	/*top: 4px;
 	right: auto;
 	bottom: 4px;
-	left: 4px;
+	left: 4px;*/
 
 	-webkit-border-radius: 3px 0 0 3px;
 	-moz-border-radius: 3px 0 0 3px;
@@ -595,10 +646,12 @@ textarea {
 }
 
 .sds-theme-options-content-layout-preview .cols-3-m .col-sidebar-secondary {
-	top: 4px;
+	right: 0;
+	left: auto;
+	/*top: 4px;
 	right: 2px;
 	bottom: 4px;
-	left: auto;
+	left: auto;*/
 
 	-webkit-border-radius: 0 3px 3px 0;
 	-moz-border-radius: 0 3px 3px 0;
@@ -607,10 +660,12 @@ textarea {
 }
 
 .sds-theme-options-content-layout-preview .cols-3-r .col-content {
-	top: 4px;
+	right: -1px;
+	left: auto;
+	/*top: 4px;
 	right: -1px;
 	bottom: 4px;
-	left: auto;
+	left: auto;*/
 
 	-webkit-border-radius: 0 3px 3px 0;
 	-moz-border-radius: 0 3px 3px 0;
@@ -618,11 +673,16 @@ textarea {
 	border-radius: 0 3px 3px 0;
 }
 
+.sds-theme-options-content-layout-wrap.ie .sds-theme-options-content-layout-preview .cols-3-r .col-content {
+	right: 43%;
+}
+
 .sds-theme-options-content-layout-preview .cols-3-r .col-sidebar {
-	top: 4px;
+	left: 0;
+	/*top: 4px;
 	right: auto;
 	bottom: 4px;
-	left: 4px;
+	left: 4px;*/
 
 	-webkit-border-radius: 3px 0 0 3px;
 	-moz-border-radius: 3px 0 0 3px;
@@ -631,10 +691,10 @@ textarea {
 }
 
 .sds-theme-options-content-layout-preview .cols-3-r .col-sidebar-secondary {
-	top: 4px;
+	/*top: 4px;
 	right: auto;
-	bottom: 4px;
-	left: 20px;
+	bottom: 4px;*/
+	left: 23%;
 
 	-webkit-border-radius: 0;
 	-moz-border-radius: 0;
@@ -667,6 +727,7 @@ textarea {
 
 #sds-theme-options-ads img {
 	max-width: 100%;
+	height: auto;
 }
 
 #sds-theme-options-ads iframe {
@@ -691,6 +752,10 @@ textarea {
 	-moz-border-radius: 5px;
 	-ms-border-radius: 5px;
 	border-radius: 5px;
+}
+
+.sds-theme-options-upgrade-ad-dark-gray {
+	background: #333;
 }
 
 .sds-theme-options-upgrade-ad:hover {
