@@ -3,7 +3,7 @@
  * This class manages all functionality with our Journal theme.
  */
 class Journal {
-	const JOURNAL_VERSION = '1.0.7';
+	const JOURNAL_VERSION = '1.0.8';
 
 	private static $instance; // Keep track of the instance
 
@@ -24,7 +24,8 @@ class Journal {
 	function __construct() {
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ), 20 ); // Register image sizes, nav menus, etc...
 		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ) ); // Add Meta Boxes
-		//add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) ); // Used to enqueue editor styles based on post type
+		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) ); // Used to enqueue editor styles based on post type
+		add_action( 'wp_head', array( $this, 'wp_head' ), 1 ); // Add <meta> tags to <head> section
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 20 ); // Unregister sidebars and alter Primary Sidebar output
 		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ) ); // Enqueue all stylesheets (Main Stylesheet, Fonts, etc...)
 		add_action( 'wp_footer', array( $this, 'wp_footer' ) ); // Responsive nav
@@ -156,6 +157,8 @@ class Journal {
 	function pre_get_posts() {
 		global $sds_theme_options, $post;
 
+		$protocol = is_ssl() ? 'https' : 'http';
+
 		// Admin only and if we have a post
 		if ( is_admin() && ! empty( $post ) ) {
 			add_editor_style( 'css/editor-style.css' );
@@ -166,14 +169,10 @@ class Journal {
 				add_editor_style( 'css/' . $color_schemes[$sds_theme_options['color_scheme']]['stylesheet'] );
 			}
 
-			// Fetch page template if any on Pages only
-			if ( $post->post_type === 'page' )
-				$wp_page_template = get_post_meta( $post->ID,'_wp_page_template', true );
+			// Open Sans Web Font (include only if a web font is not selected in Theme Options)
+			if ( ! function_exists( 'sds_web_fonts' ) || empty( $sds_theme_options['web_font'] ) )
+				add_editor_style( $protocol . '://fonts.googleapis.com/css?family=Arvo|Bitter' ); // Google WebFonts (Open Sans)
 		}
-
-		// Admin only and if we have a post using our full page or landing page templates
-		if ( is_admin() && ! empty( $post ) && ( isset( $wp_page_template ) && ( $wp_page_template === 'page-full-width.php' || $wp_page_template === 'page-landing-page.php' ) ) )
-			add_editor_style( 'css/editor-style-full-width.css' );
 	}
 
 	/**
@@ -184,6 +183,16 @@ class Journal {
 		unregister_sidebar( 'secondary-sidebar' );
 		unregister_sidebar( 'footer-sidebar' );
 		unregister_sidebar( 'copyright-area-sidebar' );
+	}
+
+	/**
+	 * This function adds <meta> tags to the <head> element.
+	 */
+	function wp_head() {
+	?>
+		<meta charset="<?php bloginfo( 'charset' ); ?>" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<?php
 	}
 
 	/**
@@ -390,12 +399,16 @@ class Journal {
 	 * .mc-gravity, .mc_gravity, .mc-newsletter, .mc_newsletter classes
 	 */
 	function gform_field_input( $input, $field, $value, $lead_id, $form_id ) {
-		$form_meta = RGFormsModel::get_form_meta( $form_id );
-		$form_css_classes = explode( ' ', $form_meta['cssClass'] );
+		$form_meta = RGFormsModel::get_form_meta( $form_id ); // Get form meta
 
-		// Ensure the current form has one of our supported classes and alter the field accordingly if we're not on admin
-		if ( isset( $form['cssClass'] ) && ! is_admin() && in_array( $form_css_classes, array( 'mc-gravity', 'mc_gravity', 'mc-newsletter', 'mc_newsletter' ) ) )
-			$input = '<div class="ginput_container"><input name="input_' . $field['id'] . '" id="input_' . $form_id . '_' . $field['id'] . '" type="text" value="" class="large" placeholder="' . $field['label'] . '" /></div>';
+		// Ensure we have at least one CSS class
+		if ( isset( $form_meta['cssClass'] ) ) {
+			$form_css_classes = explode( ' ', $form_meta['cssClass'] );
+
+			// Ensure the current form has one of our supported classes and alter the field accordingly if we're not on admin
+			if ( ! is_admin() && array_intersect( $form_css_classes, array( 'mc-gravity', 'mc_gravity', 'mc-newsletter', 'mc_newsletter' ) ) )
+				$input = '<div class="ginput_container"><input name="input_' . $field['id'] . '" id="input_' . $form_id . '_' . $field['id'] . '" type="text" value="" class="large" placeholder="' . $field['label'] . '" /></div>';
+		}
 
 		return $input;
 	}
@@ -405,11 +418,14 @@ class Journal {
 	 * .mc-gravity, .mc_gravity, .mc-newsletter, .mc_newsletter classes
 	 */
 	function gform_confirmation( $confirmation, $form, $lead, $ajax ) {
-		$form_css_classes = explode( ' ', $form['cssClass'] );
+		// Ensure we have at least one CSS class
+		if ( isset( $form['cssClass'] ) ) {
+			$form_css_classes = explode( ' ', $form['cssClass'] );
 
-		// Confirmation message is set and form has one of our supported classes (alter the confirmation accordingly)
-		if ( isset( $form['cssClass'] ) && $form['confirmation']['type'] === 'message' && in_array( $form_css_classes, array( 'mc-gravity', 'mc_gravity', 'mc-newsletter', 'mc_newsletter' ) ) )
-			$confirmation = '<section class="mc-gravity-confirmation mc_gravity-confirmation mc-newsletter-confirmation mc_newsletter-confirmation">' . $confirmation . '</section>';
+			// Confirmation message is set and form has one of our supported classes (alter the confirmation accordingly)
+			if ( $form['confirmation']['type'] === 'message' && array_intersect( $form_css_classes, array( 'mc-gravity', 'mc_gravity', 'mc-newsletter', 'mc_newsletter' ) ) )
+				$confirmation = '<div class="mc-gravity-confirmation mc_gravity-confirmation mc-newsletter-confirmation mc_newsletter-confirmation">' . $confirmation . '</div>';
+		}
 
 		return $confirmation;
 	}

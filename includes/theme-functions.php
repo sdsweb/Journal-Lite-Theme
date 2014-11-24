@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * Description: This file contains functions for utilizing options within themes (displaying site logo, tagline, etc...)
  *
- * @version 1.2.6
+ * @version 1.2.8
  */
 
 
@@ -38,22 +38,22 @@ if ( ! function_exists( 'sds_logo' ) ) {
 
 		// Logo
 		if ( ! empty( $sds_theme_options['logo_attachment_id'] ) ) :
-			?>
-			<<?php echo $sds_logo_wrapper_el; ?> id="title" class="site-title site-title-logo has-logo">
+	?>
+		<<?php echo $sds_logo_wrapper_el; ?> id="title" class="site-title site-title-logo has-logo">
 			<a href="<?php echo esc_url( home_url() ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 				<?php echo wp_get_attachment_image( $sds_theme_options['logo_attachment_id'], 'full' ); ?>
 			</a>
-			</<?php echo $sds_logo_wrapper_el; ?>>
-		<?php
+		</<?php echo $sds_logo_wrapper_el; ?>>
+	<?php
 		// No logo
 		else :
-			?>
-			<<?php echo $sds_logo_wrapper_el; ?> id="title" class="site-title site-title-no-logo no-logo">
+	?>
+		<<?php echo $sds_logo_wrapper_el; ?> id="title" class="site-title site-title-no-logo no-logo">
 			<a href="<?php echo esc_url( home_url() ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
 				<?php bloginfo( 'name' ); ?>
 			</a>
-			</<?php echo $sds_logo_wrapper_el; ?>>
-		<?php
+		</<?php echo $sds_logo_wrapper_el; ?>>
+	<?php
 		endif;
 	}
 }
@@ -69,9 +69,9 @@ if ( ! function_exists( 'sds_tagline' ) ) {
 
 		// Determine HTML wrapper element
 		$sds_tagline_wrapper_el = ( is_front_page() || is_home() ) ? 'h2' : 'p';
-		?>
+	?>
 		<<?php echo $sds_tagline_wrapper_el; ?> id="slogan" class="slogan <?php echo ( $sds_theme_options['hide_tagline'] ) ? 'hide hidden hide-tagline hide-slogan' : false; ?>">
-		<?php bloginfo( 'description' ); ?>
+			<?php bloginfo( 'description' ); ?>
 		</<?php echo $sds_tagline_wrapper_el; ?>>
 	<?php
 	}
@@ -98,19 +98,19 @@ if ( ! function_exists( 'sds_featured_image' ) ) {
 
 		// Featured Image
 		if ( has_post_thumbnail() && $link_image ) :
-			?>
-			<figure class="post-image <?php echo $featured_image_size . '-featured-image ' . $featured_image_size . '-post-image'; ?>">
-				<a href="<?php the_permalink(); ?>">
-					<?php the_post_thumbnail( $featured_image_size ); ?>
-				</a>
-			</figure>
-		<?php
-		elseif ( has_post_thumbnail() ) :
-			?>
-			<figure class="post-image <?php echo $featured_image_size . '-featured-image ' . $featured_image_size . '-post-image'; ?>">
+	?>
+		<figure class="post-image <?php echo $featured_image_size . '-featured-image ' . $featured_image_size . '-post-image'; ?>">
+			<a href="<?php the_permalink(); ?>">
 				<?php the_post_thumbnail( $featured_image_size ); ?>
-			</figure>
-		<?php
+			</a>
+		</figure>
+	<?php
+		elseif ( has_post_thumbnail() ) :
+	?>
+		<figure class="post-image <?php echo $featured_image_size . '-featured-image ' . $featured_image_size . '-post-image'; ?>">
+			<?php the_post_thumbnail( $featured_image_size ); ?>
+		</figure>
+	<?php
 		endif;
 	}
 }
@@ -150,7 +150,7 @@ if ( ! function_exists( 'sds_primary_menu_fallback' ) ) {
  */
 if ( ! function_exists( 'sds_sitemap' ) ) {
 	function sds_sitemap() {
-		?>
+	?>
 		<section class="sds-sitemap sitemap">
 			<section class="sitemap-pages page-list">
 				<h2 title="<?php esc_attr_e( 'Pages', 'journal' ); ?>"><?php _e( 'Pages', 'journal' ); ?></h2>
@@ -186,7 +186,7 @@ if ( ! function_exists( 'sds_sitemap' ) ) {
 					) );
 
 					if( $query->have_posts() ) :
-						?>
+					?>
 						<section class="sitemap-post-type-list sitemap-<?php echo $post_type_object->name; ?>-list post-type-list">
 							<h2 title="<?php echo esc_attr( $post_type_object->labels->name ); ?>">
 								<?php echo $post_type_object->labels->name; ?>
@@ -701,12 +701,32 @@ function sds_tgmpa_register() {
 			'name'      => 'Soliloquy Lite',
 			'slug'      => 'soliloquy-lite',
 			'required'  => false
+		),
+
+		// Note
+		array(
+			'name'      => 'Note - A live text widget',
+			'slug'      => 'note',
+			'required'  => false
 		)
 	);
 
 	$plugins = apply_filters( 'sds_tgmpa_plugins', $plugins );
 
 	tgmpa( $plugins );
+}
+
+/**
+ * This function is a fallback for 'title-tag' theme support added in WordPress 4.1.
+ */
+if ( ! function_exists( '_wp_render_title_tag' ) ) {
+	add_action( 'wp_head', 'sds_wp_head_title', 1 );
+
+	function sds_wp_head_title() {
+	?>
+		<title><?php wp_title( '|', true, 'right' ); ?></title>
+	<?php
+	}
 }
 
 /**
@@ -852,6 +872,9 @@ function sds_after_setup_theme() {
 
 	// Enable excerpts on Pages
 	add_post_type_support( 'page', 'excerpt' );
+
+	// Enable Title Tag Support (4.1)
+	add_theme_support( 'title-tag' );
 
 	// Register WordPress Menus
 	register_nav_menus( array(

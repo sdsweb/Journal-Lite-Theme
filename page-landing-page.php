@@ -9,6 +9,8 @@ get_header( 'landing-page' ); ?>
 	<section class="page-content index cf">
 		<?php get_template_part( 'loop', 'page-full-width' ); // Loop - Page - Full Width ?>
 
+		<section class="clear"></section>
+
 		<?php comments_template(); // Comments ?>
 	</section>
 

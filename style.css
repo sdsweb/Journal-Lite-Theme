@@ -1,7 +1,7 @@
 /**
  * Theme Name: Journal Lite
  * Theme URI: https://slocumthemes.com/wordpress-themes/journal-free/
- * Description: Journal Lite is a simple and responsive theme for blogging, gathering content, and publishing your ideas. The flexible and clean structure allows you to focus on your content without heavy distraction. Journal is mobile ready with sleek responsive views for your readers on the go. We make it easy to change colors and columns to make your site unique. Enjoy fast and easy publishing with Journal today!
+ * Description: Journal Lite is a simple and responsive theme for blogging, gathering content, and publishing your ideas. The flexible and clean structure allows you to focus on your content without heavy distraction. Journal is mobile ready with sleek responsive views for your readers on the go. We make it easy to change colors and columns to make your site unique. Enjoy fast and easy publishing with Journal today! Now supports live front-end text widget editing via <a href="http://wordpress.org/plugins/note/" target="_blank">Note</a>. More info - <a href="http://wordpress.org/plugins/note/" target="_blank">http://wordpress.org/plugins/note/</a>.
  * Author: Slocum Studio
  * Author URI: http://slocumthemes.com/
  * Version: 1.0.7
@@ -314,7 +314,7 @@ nav.primary-nav ul li a{
 
 nav.primary-nav ul li a:hover{
 	color: #fbb400;
-	background: #464646;
+	background: rgba(255, 255, 255, 0.28); /* #464646*/
 	padding-left: 10%;
 	width: 90%;
 }
@@ -1366,6 +1366,7 @@ form.mc-gravity, form.mc_gravity, form.mc-newsletter, form.mc_newsletter {
 .mc-newsletter li.gfield.gfield_error.gfield_contains_required div.ginput_container, .mc_newsletter li.gfield.gfield_error.gfield_contains_required div.ginput_container,
 .mc-gravity_wrapper li.gfield.gfield_error.gfield_contains_required div.ginput_container, .mc_gravity_wrapper li.gfield.gfield_error.gfield_contains_required div.ginput_container,
 .mc-newsletter_wrapper li.gfield.gfield_error.gfield_contains_required div.ginput_container, .mc_newsletter_wrapper li.gfield.gfield_error.gfield_contains_required div.ginput_container {
+	max-width: 100%;
 	margin: 0 !important;
 }
 
@@ -1411,10 +1412,10 @@ form.mc-gravity, form.mc_gravity, form.mc-newsletter, form.mc_newsletter {
 }
 
 .mc-gravity-confirmation, .mc_gravity-confirmation, .mc-newsletter-confirmation, .mc_newsletter-confirmation {
-	width: 98%;
+	width: 96%;
 	padding: 2%;
 	color: #fff;
-	background: #fff;
+	background: #fbb400;
 }
 
 .mc-gravity-confirmation .gform_confirmation_wrapper, .mc_gravity-confirmation .gform_confirmation_wrapper,

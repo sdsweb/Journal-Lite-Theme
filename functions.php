@@ -6,7 +6,7 @@
  *
  * Load the theme function files (options panel, theme functions, widgets, etc...).
  */
-include_once get_template_directory() . '/includes/Journal.php'; // Journal Class (main functionality, actions/filters)
+include_once get_template_directory() . '/theme/class-journal.php'; // Journal Class (main functionality, actions/filters)
 
 include_once get_template_directory() . '/includes/class-tgm-plugin-activation.php'; // TGM Activation
 
@@ -87,7 +87,7 @@ if ( ! function_exists( 'sds_theme_options_default_featured_image_size' ) ) {
  * This function adds the custom Theme Customizer styles to the <head> tag.
  */
 if ( ! function_exists( 'journal_wp_head' ) ) {
-	add_filter( 'wp_head', 'journal_wp_head', 20 );
+	add_action( 'wp_head', 'journal_wp_head', 20 );
 
 	function journal_wp_head() {
 		global $sds_theme_options;
