@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * Description: This Class instantiates the SDS Options Panel providing themes with various options to use.
  *
- * @version 1.2.6
+ * @version 1.2.9
  */
 if ( ! class_exists( 'SDS_Theme_Options' ) ) {
 	global $sds_theme_options;
@@ -18,7 +18,7 @@ if ( ! class_exists( 'SDS_Theme_Options' ) ) {
 		/**
 		 * @var string, Constant, Version of the class
 		 */
-		const VERSION = '1.2.6';
+		const VERSION = '1.2.9';
 
 
 		// Private Variables
@@ -70,7 +70,7 @@ if ( ! class_exists( 'SDS_Theme_Options' ) ) {
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) ); // Enqueue Theme Options Stylesheet
 			add_action( 'admin_menu', array( $this, 'admin_menu' ) ); // Register Appearance Menu Item
-			add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ),999 ); // Add Theme Options Menu to Toolbar
+			add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 999 ); // Add Theme Options Menu to Toolbar
 			add_action( 'admin_init', array( $this, 'admin_init' ) ); // Register Settings, Settings Sections, and Settings Fields
 			add_filter( 'wp_redirect', array( $this, 'wp_redirect' ) ); // Add "hash" (tab) to URL before re-direct
 		}
@@ -207,9 +207,22 @@ if ( ! class_exists( 'SDS_Theme_Options' ) ) {
 		/**
 		 * This function is the callback for the logo settings field.
 		 */
-		function sds_theme_options_logo_field() {
+		function sds_theme_options_logo_field( $customizer = false ) {
 			global $sds_theme_options;
+
+			// Output logo dimensions on Customizer
+			if ( $customizer ) :
 		?>
+				<p>
+					<?php
+						$sds_logo_dimensions = apply_filters( 'sds_theme_options_logo_dimensions', '300x100' );
+						printf( __( 'Upload a logo to to replace the site name. Recommended dimensions: %1$s.', 'journal' ), $sds_logo_dimensions );
+					?>
+				</p>
+		<?php
+			endif;
+		?>
+
 			<strong><?php _e( 'Current Logo:', 'journal' ); ?></strong>
 			<div class="sds-theme-options-preview sds-theme-options-logo-preview">
 				<?php
@@ -743,7 +756,7 @@ if ( ! class_exists( 'SDS_Theme_Options' ) ) {
 							<script src="https://apis.google.com/js/plusone.js"></script>
 						</div>
 
-						<a href="https://twitter.com/slocumstudio" class="twitter-follow-button" data-show-count="false" data-size="large" data-dnt="true">Follow @slocumstudio</a>
+						<a href="https://twitter.com/slocumstudio/" class="twitter-follow-button" data-show-count="false" data-size="large" data-dnt="true">Follow @slocumstudio</a>
 						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
 						<br />

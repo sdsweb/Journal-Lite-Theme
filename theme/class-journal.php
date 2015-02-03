@@ -3,7 +3,7 @@
  * This class manages all functionality with our Journal theme.
  */
 class Journal {
-	const JOURNAL_VERSION = '1.0.8';
+	const JOURNAL_VERSION = '1.1.0';
 
 	private static $instance; // Keep track of the instance
 
@@ -155,12 +155,12 @@ class Journal {
 	 * It will also enqueue the correct color scheme stylesheet to better match front-end display.
 	 */
 	function pre_get_posts() {
-		global $sds_theme_options, $post;
+		global $sds_theme_options;
 
 		$protocol = is_ssl() ? 'https' : 'http';
 
 		// Admin only and if we have a post
-		if ( is_admin() && ! empty( $post ) ) {
+		if ( is_admin() ) {
 			add_editor_style( 'css/editor-style.css' );
 
 			// Add correct color scheme if selected

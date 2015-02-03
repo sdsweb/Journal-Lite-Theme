@@ -15,10 +15,10 @@
 				<?php if ( $post->post_type === 'post' ) : ?>
 					<p class="post-date">
 						<?php if ( strlen( get_the_title() ) > 0 ) : ?>
-							<?php printf( __( 'Posted by %1$s on %2$s', 'journal' ) , '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author_meta( 'display_name' ) . '</a>', get_the_time( 'F jS, Y' ) ); ?>
+							<?php printf( __( 'Posted by %1$s on %2$s', 'journal' ) , '<a href="' . get_author_posts_url( get_the_author_meta( 'ID' ) ) . '">' . get_the_author_meta( 'display_name' ) . '</a>', get_the_time( get_option( 'date_format' ) ) ); ?>
 						<?php else: // No title ?>
 							<a href="<?php the_permalink(); ?>">
-								<?php printf( __( 'Posted by %1$s on %2$s', 'journal' ) , get_the_author_meta( 'display_name' ), get_the_time( 'F jS, Y' ) ); ?>
+								<?php printf( __( 'Posted by %1$s on %2$s', 'journal' ) , get_the_author_meta( 'display_name' ), get_the_time( get_option( 'date_format' ) ) ); ?>
 							</a>
 						<?php endif; ?>
 					</p>

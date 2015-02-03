@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
  *
  * Description: This file contains functions for utilizing options within themes (displaying site logo, tagline, etc...)
  *
- * @version 1.2.8
+ * @version 1.2.9
  */
 
 
@@ -87,7 +87,7 @@ if ( ! function_exists( 'sds_tagline' ) ) {
  * @uses the_post_thumbnail()
  */
 if ( ! function_exists( 'sds_featured_image' ) ) {
-	function sds_featured_image( $link_image = false, $size = false ) {
+	function sds_featured_image( $link_image = false, $size = false ) {	
 		// Allow size to be over-written by function call
 		if ( $size )
 			$featured_image_size = $size;
@@ -118,7 +118,7 @@ if ( ! function_exists( 'sds_featured_image' ) ) {
 /**
  * This function adds the current site name after the title in the <head> section.
  */
-if ( ! function_exists( 'sds_wp_title' ) ) {
+if ( ! function_exists( 'sds_wp_title' ) && ! function_exists( '_wp_render_title_tag' ) ) {
 	add_filter( 'wp_title', 'sds_wp_title' );
 
 	function sds_wp_title( $title ) {
@@ -150,62 +150,74 @@ if ( ! function_exists( 'sds_primary_menu_fallback' ) ) {
  */
 if ( ! function_exists( 'sds_sitemap' ) ) {
 	function sds_sitemap() {
-	?>
-		<section class="sds-sitemap sitemap">
-			<section class="sitemap-pages page-list">
-				<h2 title="<?php esc_attr_e( 'Pages', 'journal' ); ?>"><?php _e( 'Pages', 'journal' ); ?></h2>
-				<ul>
-					<?php wp_list_pages( array( 'title_li' => '' ) ); ?>
-				</ul>
-			</section>
+		global $post;
+		?>
+		<div class="sds-sitemap sitemap">
+			<?php if ( apply_filters( 'sds_sitemap_show_pages', true ) ) : // Allow pages to not be displayed ?>
+				<div class="sitemap-pages page-list">
+					<h2 title="<?php esc_attr_e( 'Pages', 'journal' ); ?>"><?php _e( 'Pages', 'journal' ); ?></h2>
+					<ul>
+						<?php wp_list_pages( array( 'title_li' => '' ) ); ?>
+					</ul>
+				</div>
+			<?php endif; ?>
 
-			<section class="sitemap-archives sitemap-monthly-archives monthly-archives archive-list">
-				<h2 title="<?php esc_attr_e( 'Monthly Archives', 'journal' ); ?>"><?php _e( 'Monthly Archives', 'journal' ); ?></h2>
-				<ul>
-					<?php wp_get_archives(); ?>
-				</ul>
-			</section>
+			<?php if ( apply_filters( 'sds_sitemap_show_monthly_archives', true ) ) : // Allow monthly archives to not be displayed ?>
+				<div class="sitemap-archives sitemap-monthly-archives monthly-archives archive-list">
+					<h2 title="<?php esc_attr_e( 'Monthly Archives', 'journal' ); ?>"><?php _e( 'Monthly Archives', 'journal' ); ?></h2>
+					<ul>
+						<?php echo apply_filters( 'sds_sitemap_monthly_archives', wp_get_archives( array( 'echo' => false ) ) ); ?>
+					</ul>
+				</div>
+			<?php endif; ?>
 
-			<section class="sitemap-categories category-list">
-				<h2 title="<?php esc_attr_e( 'Blog Categories', 'journal' ); ?>"><?php _e( 'Blog Categories', 'journal' ); ?></h2>
-				<ul>
-					<?php wp_list_categories( array( 'title_li' => '' ) ); ?>
-				</ul>
-			</section>
+			<?php if ( apply_filters( 'sds_sitemap_show_categories', true ) ) : // Allow categories to not be displayed ?>
+				<div class="sitemap-categories category-list">
+					<h2 title="<?php esc_attr_e( 'Blog Categories', 'journal' ); ?>"><?php _e( 'Blog Categories', 'journal' ); ?></h2>
+					<ul>
+						<?php wp_list_categories( array( 'title_li' => '' ) ); ?>
+					</ul>
+				</div>
+			<?php endif; ?>
 
 
 			<?php
+			// Allow post types to be filtered
+			$public_post_types = apply_filters( 'sds_sitemap_public_post_types', get_post_types( array( 'public' => true ) ) );
+
 			// Output all public post types except attachments and pages (see above for pages)
-			foreach( get_post_types( array( 'public' => true ) ) as $post_type ) {
-				if ( ! in_array( $post_type, array( 'attachment', 'page' ) ) ) {
-					$post_type_object = get_post_type_object( $post_type );
+			if ( ! empty( $public_post_types ) )
+				foreach( $public_post_types as $post_type ) :
+					// Skip attachments and pages
+					if ( ! in_array( $post_type, array( 'attachment', 'page' ) ) ) :
+						$post_type_object = get_post_type_object( $post_type );
 
-					$query = new WP_Query( array(
-						'post_type' => $post_type,
-						'posts_per_page' => wp_count_posts( $post_type )->publish
-					) );
+						$query = new WP_Query( array(
+							'post_type' => $post_type,
+							'posts_per_page' => wp_count_posts( $post_type )->publish
+						) );
 
-					if( $query->have_posts() ) :
-					?>
-						<section class="sitemap-post-type-list sitemap-<?php echo $post_type_object->name; ?>-list post-type-list">
-							<h2 title="<?php echo esc_attr( $post_type_object->labels->name ); ?>">
-								<?php echo $post_type_object->labels->name; ?>
-							</h2>
+						if( $query->have_posts() ) :
+							?>
+							<div class="sitemap-post-type-list sitemap-<?php echo $post_type_object->name; ?>-list post-type-list">
+								<h2 title="<?php echo esc_attr( $post_type_object->labels->name ); ?>">
+									<?php echo $post_type_object->labels->name; ?>
+								</h2>
 
-							<ul>
-								<?php while( $query->have_posts() ) : $query->the_post(); ?>
-									<li>
-										<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-									</li>
-								<?php endwhile; ?>
-							</ul>
-						</section>
-					<?php
+								<ul>
+									<?php while( $query->have_posts() ) : $query->the_post(); ?>
+										<li id="<?php echo esc_attr( $post_type . '-' . $post->ID ); ?>">
+											<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+										</li>
+									<?php endwhile; ?>
+								</ul>
+							</div>
+						<?php
+						endif;
 					endif;
-				}
-			}
+				endforeach;
 			?>
-		</section>
+		</div>
 	<?php
 	}
 }
@@ -215,52 +227,88 @@ if ( ! function_exists( 'sds_sitemap' ) ) {
  */
 if ( ! function_exists( 'sds_archive_title' ) ) {
 	function sds_archive_title() {
-		// Author
-		if ( is_author() ) :
-			$author = get_user_by( 'slug', get_query_var( 'author_name' ) ); // Get user data by slug with value of author_name in query
+		global $sds_theme_options;
+
+		// Determine if we should we output the title based on settings
+		if ( $sds_theme_options['hide_archive_titles'] )
+			return false;
+
+		// Use core functionality if it exists
+		if ( function_exists( 'the_archive_title' ) ) :
+			$css_class = 'page-title';
+
+			// Author
+			if ( is_author() )
+				$css_class .= ' author-archive-title';
+			// Categories
+			else if ( is_category() )
+				$css_class .= ' category-archive-title';
+			// Tags
+			else if ( is_tag() )
+				$css_class .= ' tag-archive-title';
+			// Daily Archives
+			else if ( is_day() )
+				$css_class .= ' day-archive-title daily-archive-title';
+			// Monthly Archives
+			else if ( is_month() )
+				$css_class .= ' month-archive-title monthly-archive-title';
+			// Yearly Archives
+			else if ( is_year() )
+				$css_class .= ' year-archive-title yearly-archive-title';
+
+
+			$css_class = apply_filters( 'sds_archive_title_css_class', $css_class );
+
+			the_archive_title( '<h1 class="' . esc_attr( $css_class ) . '">', '</h1>' );
+		// Otherwise use fallback functionality
+		else :
+			// Author
+			if ( is_author() ) :
+				$author = get_user_by( 'slug', get_query_var( 'author_name' ) ); // Get user data by slug with value of author_name in query
 			?>
-			<h1 title="<?php esc_attr_e( 'Author Archive:', 'journal' ); ?> <?php echo ( $author instanceof WP_User ) ? $author->display_name : false; ?>" class="page-title author-archive-title">
-				<?php _e( 'Author Archive:', 'journal' ); ?> <?php echo ( $author instanceof WP_User ) ? $author->display_name : false; ?>
-			</h1>
-		<?php
-		// Categories
-		elseif ( is_category() ) :
+				<h1 title="<?php esc_attr_e( 'Author Archive:', 'journal' ); ?> <?php echo ( $author instanceof WP_User ) ? $author->display_name : false; ?>" class="page-title author-archive-title">
+					<?php _e( 'Author Archive:', 'journal' ); ?> <?php echo ( $author instanceof WP_User ) ? $author->display_name : false; ?>
+				</h1>
+			<?php
+			// Categories
+			elseif ( is_category() ) :
 			?>
-			<h1 title="<?php single_cat_title( __( 'Category Archive: ', 'journal' ) ); ?>" class="page-title category-archive-title">
-				<?php single_cat_title( __( 'Category Archive: ', 'journal' ) ); ?>
-			</h1>
-		<?php
-		// Tags
-		elseif ( is_tag() ) :
+				<h1 title="<?php single_cat_title( __( 'Category Archive: ', 'journal' ) ); ?>" class="page-title category-archive-title">
+					<?php single_cat_title( __( 'Category Archive: ', 'journal' ) ); ?>
+				</h1>
+			<?php
+			// Tags
+			elseif ( is_tag() ) :
 			?>
-			<h1 title="<?php single_tag_title( __( 'Tag Archive: ', 'journal' ) ); ?>" class="page-title tag-archive-title">
-				<?php single_tag_title( __( 'Tag Archive: ', 'journal' ) ); ?>
-			</h1>
-		<?php
-		// Daily Archives
-		elseif ( is_day() ) :
-			$the_date = get_the_date();
+				<h1 title="<?php single_tag_title( __( 'Tag Archive: ', 'journal' ) ); ?>" class="page-title tag-archive-title">
+					<?php single_tag_title( __( 'Tag Archive: ', 'journal' ) ); ?>
+				</h1>
+			<?php
+			// Daily Archives
+			elseif ( is_day() ) :
+				$the_date = get_the_date();
 			?>
-			<h1 title="<?php esc_attr_e( 'Daily Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title day-archive-title daily-archive-title">
-				<?php _e( 'Daily Archives:', 'journal' ); ?> <?php echo $the_date; ?>
-			</h1>
-		<?php
-		// Monthly Archives
-		elseif ( is_month() ) :
-			$the_date = get_the_date( 'F Y' );
+				<h1 title="<?php esc_attr_e( 'Daily Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title day-archive-title daily-archive-title">
+					<?php _e( 'Daily Archives:', 'journal' ); ?> <?php echo $the_date; ?>
+				</h1>
+			<?php
+			// Monthly Archives
+			elseif ( is_month() ) :
+				$the_date = get_the_date( 'F Y' );
 			?>
-			<h1 title="<?php esc_attr_e( 'Monthly Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title month-archive-title monthly-archive-title">
-				<?php _e( 'Monthly Archives:', 'journal' ); ?> <?php echo $the_date; ?>
-			</h1>
-		<?php
-		// Yearly Archives
-		elseif ( is_year() ) :
-			$the_date = get_the_date( 'Y' );
+				<h1 title="<?php esc_attr_e( 'Monthly Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title month-archive-title monthly-archive-title">
+					<?php _e( 'Monthly Archives:', 'journal' ); ?> <?php echo $the_date; ?>
+				</h1>
+			<?php
+			// Yearly Archives
+			elseif ( is_year() ) :
+				$the_date = get_the_date( 'Y' );
 			?>
-			<h1 title="<?php esc_attr_e( 'Yearly Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title year-archive-title yearly-archive-title">
-				<?php _e( 'Yearly Archives:', 'journal' ); ?> <?php echo $the_date; ?>
-			</h1>
-		<?php
+				<h1 title="<?php esc_attr_e( 'Yearly Archives:', 'journal' ); ?> <?php echo $the_date; ?>" class="page-title year-archive-title yearly-archive-title">
+					<?php _e( 'Yearly Archives:', 'journal' ); ?> <?php echo $the_date; ?>
+				</h1>
+			<?php
+			endif;
 		endif;
 	}
 }
@@ -270,7 +318,7 @@ if ( ! function_exists( 'sds_archive_title' ) ) {
  */
 if ( ! function_exists( 'sds_no_posts' ) ) {
 	function sds_no_posts() {
-		?>
+	?>
 		<section class="no-results no-posts">
 			<p><?php _e( 'We were not able to find any posts. Please try again.', 'journal' ); ?></p>
 		</section>
@@ -283,7 +331,7 @@ if ( ! function_exists( 'sds_no_posts' ) ) {
  */
 if ( ! function_exists( 'sds_single_post_navigation' ) ) {
 	function sds_single_post_navigation() {
-		?>
+	?>
 		<section class="single-post-navigation post-navigation">
 			<section class="previous-posts">
 				<?php next_post_link( '%link', '&laquo; %title' ); ?>
@@ -301,7 +349,7 @@ if ( ! function_exists( 'sds_single_post_navigation' ) ) {
  */
 if ( ! function_exists( 'sds_single_image_navigation' ) ) {
 	function sds_single_image_navigation() {
-		?>
+	?>
 		<section class="single-post-navigation post-navigation single-image-navigation image-navigation">
 			<section class="previous-posts">
 				<?php previous_image_link( false, '&laquo; Previous Image' ); ?>
@@ -319,7 +367,7 @@ if ( ! function_exists( 'sds_single_image_navigation' ) ) {
  */
 if ( ! function_exists( 'sds_copyright' ) ) {
 	function sds_copyright( $theme_name ) {
-		?>
+	?>
 		<span class="site-copyright">
 			<?php echo apply_filters( 'sds_copyright', 'Copyright &copy; ' . date( 'Y' ) . ' <a href="' . esc_url( home_url() ) . '">' . get_bloginfo( 'name' ) . '</a>. All Rights Reserved.' ); ?>
 		</span>
@@ -355,28 +403,28 @@ if ( ! function_exists( 'sds_social_media' ) ) {
 			);
 
 			$social_font_map = apply_filters( 'sds_social_icon_map', $social_font_map );
-			?>
+		?>
 			<section class="social-media-icons">
-				<?php
+			<?php
 				foreach( $sds_theme_options['social_media'] as $key => $url ) :
 					// RSS (use site RSS feed, $url is Boolean this case)
 					if ( $key === 'rss_url_use_site_feed' && $url ) :
-						?>
+					?>
 						<a href="<?php bloginfo( 'rss2_url' ); ?>" class="rss_url <?php echo $social_font_map['rss_url']; ?>" target="_blank"></a>
 					<?php
 					// RSS (use custom RSS feed)
 					elseif ( $key === 'rss_url' && ! $sds_theme_options['social_media']['rss_url_use_site_feed'] && ! empty( $url ) ) :
-						?>
+					?>
 						<a href="<?php echo esc_attr( $url ); ?>" class="rss_url <?php echo $social_font_map['rss_url']; ?>" target="_blank"></a>
 					<?php
 					// All other networks
 					elseif ( $key !== 'rss_url_use_site_feed' && $key !== 'rss_url' && ! empty( $url ) ) :
-						?>
+					?>
 						<a href="<?php echo esc_url( $url ); ?>" class="<?php echo $key; ?> <?php echo $social_font_map[$key]; ?>" target="_blank" rel="me"></a>
 					<?php
 					endif;
 				endforeach;
-				?>
+			?>
 			</section>
 		<?php
 		}
@@ -393,33 +441,33 @@ if ( ! function_exists( 'sds_post_meta' ) ) {
 
 		// Categories and tags
 		if ( $cats && $tags ):
-			?>
+		?>
 			<p>
-				<?php
+			<?php
 				printf( __( 'This entry was posted in %1$s and tagged in %2$s.', 'journal' ),
-					get_the_category_list( ', ', 'single' ),
-					get_the_tag_list( '', ', ' ) );
-				?>
+				get_the_category_list( ', ', 'single' ),
+				get_the_tag_list( '', ', ' ) );
+			?>
 			</p>
 		<?php
 		// Categories and no tags
 		elseif ( $cats && ! $tags ) :
-			?>
+		?>
 			<p>
-				<?php
+			<?php
 				printf( __( 'This entry was posted in %1$s.', 'journal' ),
-					get_the_category_list( ', ', 'single' ) );
-				?>
+				get_the_category_list( ', ', 'single' ) );
+			?>
 			</p>
 		<?php
 		// Tags and no categories
 		elseif ( $tags && ! $cats ) :
-			?>
+		?>
 			<p>
-				<?php
+			<?php
 				printf( __( 'This entry was tagged in %1$s.', 'journal' ),
-					get_the_tag_list( '', ', ' ) );
-				?>
+				get_the_tag_list( '', ', ' ) );
+			?>
 			</p>
 		<?php
 		endif;
@@ -467,58 +515,58 @@ if ( ! function_exists( 'sds_comment' ) ) {
 		switch ( $comment->comment_type ) :
 			case 'pingback' :
 			case 'trackback' :
-				// Display trackbacks differently than normal comments.
-				?>
-				<li id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
-					<p><?php _e( 'Pingback:', 'journal' ); ?> <?php comment_author_link(); ?> <?php edit_comment_link( 'Edit', '<span class="ping-meta"><span class="edit-link">', '</span></span>' ); ?></p>
-				</li>
-				<?php
-				break;
+			// Display trackbacks differently than normal comments.
+		?>
+		<li id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
+			<p><?php _e( 'Pingback:', 'journal' ); ?> <?php comment_author_link(); ?> <?php edit_comment_link( 'Edit', '<span class="ping-meta"><span class="edit-link">', '</span></span>' ); ?></p>
+		</li>
+		<?php
+			break;
 			default :
-				// Proceed with normal comments.
-				?>
-					<li id="li-comment-<?php comment_ID(); ?>">
-						<article id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
-							<section class="comment-author vcard">
-								<section class="author-details">
-									<?php echo get_avatar( $comment, 74 ); ?>
-									<span class="author-link"><?php comment_author_link(); ?></span>
-									<br />
-									<header class="comment-meta">
-										<cite class="fn">
-											<?php
-											printf( __( '<a href="%1$s"><time datetime="%2$s" itemprop="commentTime">%3$s</time></a>', 'journal' ),
-												esc_url( get_comment_link( $comment->comment_ID ) ),
-												get_comment_time( 'c' ),
-												sprintf( __( '%1$s at %2$s', 'journal' ), get_comment_date(), get_comment_time() )
-											);
-											?>
+			// Proceed with normal comments.
+		?>
+		<li id="li-comment-<?php comment_ID(); ?>">
+			<article id="comment-<?php comment_ID(); ?>" <?php comment_class(); ?>>
+				<section class="comment-author vcard">
+					<section class="author-details">
+						<?php echo get_avatar( $comment, 74 ); ?>
+						<span class="author-link"><?php comment_author_link(); ?></span>
+						<br />
+						<header class="comment-meta">
+							<cite class="fn">
+								<?php
+									printf( __( '<a href="%1$s"><time datetime="%2$s" itemprop="commentTime">%3$s</time></a>', 'journal' ),
+										esc_url( get_comment_link( $comment->comment_ID ) ),
+										get_comment_time( 'c' ),
+										sprintf( __( '%1$s at %2$s', 'journal' ), get_comment_date(), get_comment_time() )
+									);
+								?>
 
-											<?php edit_comment_link( __( 'Edit', 'journal' ), '<span class="edit-link">', '<span>' ); ?>
-										</cite>
-									</header>
-								</section>
-							</section>
+								<?php edit_comment_link( __( 'Edit', 'journal' ), '<span class="edit-link">', '<span>' ); ?>
+							</cite>
+						</header>
+					</section>
+				</section>
 
-							<section class="comment-content-container">
-								<?php if ( $comment->comment_approved == '0' ) : ?>
-									<p class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.', 'journal' ); ?></p>
-								<?php endif; ?>
+				<section class="comment-content-container">
+					<?php if ( $comment->comment_approved == '0' ) : ?>
+						<p class="comment-awaiting-moderation"><?php _e( 'Your comment is awaiting moderation.', 'journal' ); ?></p>
+					<?php endif; ?>
 
-								<section class="comment-content">
-									<?php comment_text(); ?>
-								</section>
-							</section>
+					<section class="comment-content">
+						<?php comment_text(); ?>
+					</section>
+				</section>
 
-							<section class="clear">&nbsp;</section>
+				<section class="clear">&nbsp;</section>
 
-							<section class="reply">
-								<?php comment_reply_link( array_merge( $args, array( 'reply_text' => __( 'Reply', 'journal' ), 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
-							</section>
-						</article>
-					</li>
-				<?php
-				break;
+				<section class="reply">
+					<?php comment_reply_link( array_merge( $args, array( 'reply_text' => __( 'Reply', 'journal' ), 'depth' => $depth, 'max_depth' => $args['max_depth'] ) ) ); ?>
+				</section>
+			</article>
+		</li>
+		<?php
+			break;
 		endswitch;
 	}
 }
@@ -566,7 +614,7 @@ function sds_customize_register( $wp_customize ) {
 			$wp_customize,
 			'logo_attachment_id',
 			array(
-				'label'  => __( 'Logo', 'journal' ),
+				'label' => __( 'Logo', 'journal' ),
 				'section'  => 'title_tagline',
 				'settings' => 'sds_theme_options[logo_attachment_id]',
 				'sds_theme_options_instance' => $sds_theme_options_instance,
@@ -696,11 +744,15 @@ add_action( 'tgmpa_register', 'sds_tgmpa_register' );
 
 function sds_tgmpa_register() {
 	$plugins = array(
-		// Soliloquy
+		// One-Click Child Themes for Slocum Themes
 		array(
-			'name'      => 'Soliloquy Lite',
-			'slug'      => 'soliloquy-lite',
-			'required'  => false
+			'name' => 'One-Click Child Themes for Slocum Themes',
+			'slug' => 'sds-one-click-child-themes-master',
+			'source' => 'https://github.com/sdsweb/sds-one-click-child-themes/archive/master.zip',
+			'required' => false,
+			'force_activation' => false,
+			'force_deactivation' => false,
+			'external_url' => 'https://github.com/sdsweb/sds-one-click-child-themes/'
 		),
 
 		// Note
@@ -714,19 +766,6 @@ function sds_tgmpa_register() {
 	$plugins = apply_filters( 'sds_tgmpa_plugins', $plugins );
 
 	tgmpa( $plugins );
-}
-
-/**
- * This function is a fallback for 'title-tag' theme support added in WordPress 4.1.
- */
-if ( ! function_exists( '_wp_render_title_tag' ) ) {
-	add_action( 'wp_head', 'sds_wp_head_title', 1 );
-
-	function sds_wp_head_title() {
-	?>
-		<title><?php wp_title( '|', true, 'right' ); ?></title>
-	<?php
-	}
 }
 
 /**
@@ -770,12 +809,25 @@ function sds_wp_enqueue_scripts() {
 }
 
 /**
+ * This function is a fallback for 'title-tag' theme support added in WordPress 4.1.
+ */
+if ( ! function_exists( '_wp_render_title_tag' ) ) {
+	add_action( 'wp_head', 'sds_wp_head_title', 1 );
+
+	function sds_wp_head_title() {
+	?>
+		<title><?php wp_title( '|', true, 'right' ); ?></title>
+	<?php
+	}
+}
+
+/**
  * This function outputs necessary scripts/styles in the head section based on options (web font, custom scripts/styles).
  */
 add_action( 'wp_head', 'sds_wp_head' );
 
 function sds_wp_head() {
-	global $sds_theme_options;
+	global $sds_theme_options, $is_IE;
 
 	// Web Fonts
 	if ( function_exists( 'sds_web_fonts' ) && ! empty( $sds_theme_options['web_font'] ) ) :
@@ -783,15 +835,19 @@ function sds_wp_head() {
 		$selected_web_font = array_key_exists( $sds_theme_options['web_font'], $web_fonts ) ? $web_fonts[$sds_theme_options['web_font']] : false;
 
 		if ( ! empty( $selected_web_font ) && isset( $selected_web_font['css'] ) ) :
-			?>
+		?>
 			<style type="text/css">
 				<?php echo apply_filters( 'sds_web_font_css_selector', 'html, body' ); ?> {
-				<?php echo $selected_web_font['css']; ?>
+					<?php echo $selected_web_font['css']; ?>
 				}
 			</style>
 		<?php
 		endif;
 	endif;
+
+	// HTML5 Shiv (IE only, conditionally for less than IE9)
+	if ( $is_IE )
+		echo '<!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->';
 }
 
 /**
@@ -919,7 +975,7 @@ function sds_widgets_init() {
 	register_sidebar( array(
 		'name'          => __( 'Front Page Slider', 'journal' ),
 		'id'            => 'front-page-slider-sidebar',
-		'description'   => __( '*This widget area is only displayed if a Front Page is selected via Settings > Reading in the Dashboard. Specifically formatted for Soliloquy or SlideDeck sliders.* This widget area is displayed above the content on the Front Page.', 'journal' ),
+		'description'   => __( '*This widget area is only displayed if a Front Page is selected via Settings > Reading in the Dashboard.* This widget area is displayed above the content on the Front Page.', 'journal' ),
 		'before_widget' => '<section id="front-page-slider-%1$s" class="widget front-page-slider front-page-slider-widget slider %2$s">',
 		'after_widget'  => '</section>',
 		'before_title'  => '<h3 class="widgettitle widget-title front-page-slider-title">',
