@@ -3,7 +3,7 @@
  * This class manages all functionality with our Journal theme.
  */
 class Journal {
-	const JOURNAL_VERSION = '1.1.0';
+	const JOURNAL_VERSION = '1.1.1';
 
 	private static $instance; // Keep track of the instance
 

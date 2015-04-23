@@ -2,9 +2,13 @@
 Theme: Journal Lite
 Author: Slocum Themes/Slocum Design Studio
 Author URI: https://slocumthemes.com/
-Current Version: 1.1.0
+Current Version: 1.1.1
 ==========================================
 
+
+1.1.1 // April 23 2015
+------------------------
+- Updated TGM Plugin Activation to version 2.4.1
 
 1.1.0 // January 30 2015
 ------------------------
