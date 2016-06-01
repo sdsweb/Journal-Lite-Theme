@@ -70,7 +70,7 @@ q:before, q:after {
 }
 
 ul {
-	list-style: none;
+	margin-left: 2em;
 }
 
 mark{
@@ -325,6 +325,11 @@ nav.primary-nav{
 nav.primary-nav ul{
 	width: 100%;
 	float: left;
+	margin-left: 0;
+}
+
+nav.primary-nav ul li {
+	list-style: none;
 }
 
 nav.primary-nav ul li a{
@@ -559,7 +564,7 @@ dd {
 }
 
 
-.post-content ul ul, .comment ul ul {
+.post-content ul ul, .post-content ul ol, .post-content ol ul, .comment ul ul, .comment ul ol, .comment ol ul {
 	margin: 0;
 }
 
